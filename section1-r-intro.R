@@ -6,6 +6,7 @@
 # note that in Rstudio you can see all keyboard shortcuts 
 # Windows and Linux: alt+shift+K
 # Mac: option+shift+K
+# one of most useful is alt+-
 
 # basic arithmetic
 1+1
