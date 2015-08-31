@@ -3,6 +3,9 @@
 ## for Stats 1 2 Sep 2015   ##
 ##############################
 
+# note that in Rstudio you can see all keyboard shortcuts 
+# Windows and Linux: alt+shift+K
+# Mac: option+shift+K
 
 # basic arithmetic
 1+1
