@@ -99,3 +99,7 @@ mtcars <- mtcars %>%
 	mutate(mpg_per_cyl = mpg/cyl)
 
 mean(mtcars$mpg_per_cyl)
+
+# dplyr has a lot of other useful functions 
+# check them out in documentation
+# cheatsheet available on rstudio's website 
