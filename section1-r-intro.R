@@ -78,3 +78,20 @@ mtcars %>% # mtcars 'then'
   group_by(cyl) %>% # group by this var, "then"
   summarize(meanmpg = mean(mpg)) # summarize, returning mean mpg
 
+# What if we don't want cars over 4 tons?
+  # e.g. we need to subset by **row**
+mtcars %>% 
+  filter(wt < 4) %>% 
+  group_by(cyl) %>% 
+  summarize(meanmpg = mean(mpg))
+
+# We can also subset by column:
+mtcars %>% 
+  select(mpg, cyl, wt) %>% 
+  head()
+
+# We can make new vars with "mutate": 
+mtcars <- mtcars %>% 
+	mutate(mpg_per_cyl = mpg/cyl)
+
+mean(mtcars$mpg_per_cyl)
