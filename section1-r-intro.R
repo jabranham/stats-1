@@ -73,8 +73,8 @@ abline(duncan.model, col="black", lwd=3, lty=2)
 # For loops do something a set number of times
 x <- 1:5
 for (i in 1:10){ # do something 10 times, call the iteration i
-  x <- x+1
-  print(x)
+  x <- x+1 # reassign x adding 1 to each element
+  print(x) # print the result
 }
 
 # Useful R package of the week
