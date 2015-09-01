@@ -70,6 +70,13 @@ duncan.model <- lm(prestige ~ income, data=Duncan)
 summary(duncan.model)
 abline(duncan.model, col="black", lwd=3, lty=2)
 
+# For loops do something a set number of times
+x <- 1:5
+for (i in 1:10){ # do something 10 times, call the iteration i
+  x <- x+1
+  print(x)
+}
+
 # Useful R package of the week
 # dplyr
 # for data manipulation 
