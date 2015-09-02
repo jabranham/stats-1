@@ -55,8 +55,6 @@ abline(reg1, col="green", lwd=3, lty="dashed") # adding line implied by reg1
              # green, thickness 3, dashed line
 
 ## Packages
-install.packages("car") #only need to do this if you haven't installed it before 
-library(car) #this loads the package into R's memory so you can use it 
 dataURL <- "http://socserv.socsci.mcmaster.ca/jfox/Books/Companion/data/Duncan.txt"
 Duncan <- read.table(dataURL, header=TRUE) 
 
