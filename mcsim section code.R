@@ -1,0 +1,43 @@
+## flip a fair coin 10 times,
+## record proprtion of H,
+## repeat process 10,000 times
+
+# true (unknown) p
+p <- .7
+
+# setting up vector to hold outcomes
+pheads <- c()
+# looping 10,000 times, each recording 10 flips
+for (i in 1:10000){
+  nheads <- rbinom(1, size=10, prob=p)
+  pheads[i] <- nheads / 10
+}
+
+# histogram of results
+hist(pheads, breaks=seq(-.05,1.05, by=.1), freq=FALSE)
+# putting vertical line at true p
+abline(v=.5, col="green", lwd=3)
+
+# what's the normal approximation here?
+curve(dnorm(x, mean=####, sd = ####, add=TRUE)
+
+# repeat whole thing with other values of p (e.g. .1, .7, etc.)
+
+
+
+## What about if we take the mean of 100 draws from a Poisson?
+## What distribution should that have?
+
+# let true lambda equal 5
+lambda.true <- 5
+
+# setting up 
+pmean <- c()
+# loop
+for(i in 1:10000){
+  pmean[i] <- mean(rpois(100, lambda = lambda.true))
+}
+
+hist(pmean, freq=FALSE)
+abline(v=lambda.true, col="green", lwd=3)
+curve(dnorm(x, mean=5, sd=sqrt(lambda.true/100)), add=TRUE)
