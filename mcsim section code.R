@@ -1,4 +1,4 @@
-## flip a fair coin 10 times,
+## flip a coin 10 times,
 ## record proprtion of H,
 ## repeat process 10,000 times
 
@@ -19,9 +19,10 @@ hist(phatmle, breaks=seq(-.05,1.05, by=.1), freq=FALSE)
 abline(v=.5, col="green", lwd=3)
 
 # what's the normal approximation here?
-curve(dnorm(x, mean=###, sd = ###), add=TRUE)
+curve(dnorm(x, mean=.5, sd = sqrt(.25/10)), add=TRUE)
 
-# repeat whole thing with other values of p (e.g. .1, .7, etc.)
+  # repeat whole thing with other values of p
+  # (e.g. .1, .7, etc.)
 
 
 ## What about if we take the mean of 100 draws from a Poisson?
