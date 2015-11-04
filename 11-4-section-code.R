@@ -20,11 +20,11 @@ xbar <- c()
 CI.95 <- matrix(NA, nrow = 10000, ncol = 2)
 
 # running loop to estimate these things
-for(i in 1:10000){
+for (i in 1:10000){
   simulated.data <- rnorm(n, mean=mu.true, sd=sqrt(sigma2.true))
   xbar[i] <- mean(simulated.data)
-  CI.95[i, ] <- c(mean(simulated.data) - 1.96*sqrt(3/100),
-                  mean(simulated.data) + 1.96*sqrt(3/100))
+  CI.95[i, ] <- c(mean(simulated.data) - 1.96 * sqrt(3 / 100),
+                  mean(simulated.data) + 1.96 * sqrt(3 / 100))
 }
 
 # what is the sampling distribution for xbar?
@@ -36,28 +36,28 @@ sd(xbar)
 # plotting histogram of simulated xbars
 hist(xbar, freq=FALSE)
 # overlaying curve of true sampling distribution for xbar
-curve(dnorm(x, mean=mu.true, sd=sqrt(sigma2.true/n)), add=TRUE)
+curve(dnorm(x, mean = mu.true, sd = sqrt(sigma2.true / n)), add=TRUE)
 
 # creating a variable that says whether each
 # CI contains true mu
-mu.in.ci <- CI.95[ , 1] < mu.true & CI.95[ , 2] > mu.true
+mu_in_ci <- CI.95[ , 1] < mu.true & CI.95[ , 2] > mu.true
 
 # plotting the first 100 CIs 
 # and whether they conatin mu
 
 plot(-99,xlim=c(4,6), ylim=c(0,100), bty="n",
      xlab="mu", ylab="sample", yaxt="n")
-for(i in 1:100){
+for (i in 1:100){
   segments(CI.95[i, 1], i, CI.95[i, 2], i,
-           col=ifelse(mu.in.ci[i], "green", "red"))
+           col=ifelse(mu_in_ci[i], "green", "red"))
   points(xbar[i], i, pch=19, cex=.2)
 }
 abline(v=mu.true, lty=3)
 
 # calculating how many of the 95% CIs
 # contain the true mean of 5
-table(mu.in.ci)
-mean(mu.in.ci)
+table(mu_in_ci)
+mean(mu_in_ci)
 
 
 
@@ -91,12 +91,12 @@ abline(v=mean(dem.null))
 # overlay curve of actual (exact) sampling dist
 points(600:900, dbinom(600:900, size=1500, prob=.5))
 # overlaying curve of normal approximation to sampling dist
-curve(dnorm(x, mean=1500*.5, sd=sqrt(1500*.5*.5)), add=TRUE)
+curve(dnorm(x, mean = 1500 * .5, sd=sqrt(1500 * .5 * .5)), add=TRUE)
 
 # calculating p-value for our estimate, which is 801
 # one-tailed test
 mean(dem.null >= 801)
 # two-tailed (probably more appropriate)
-mean(dem.null >= 801 | dem.null <= (750-801)+750)
+mean(dem.null >= 801 | dem.null <= (750 - 801) + 750)
 # under either type of test, our observed result
 # would be extremely unlikely if the null hypothesis were true
