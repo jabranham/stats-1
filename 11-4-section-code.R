@@ -6,7 +6,7 @@
 ## and 95% confidence intervals
 
 # true model is iid N(5,3)
-# (we don't know the mean, only var=1)
+# (we don't know the mean, only var=3)
 # we observe 100 data points
 
 # setting values of true mu, sigma2, n
