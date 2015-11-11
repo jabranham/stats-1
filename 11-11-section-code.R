@@ -30,11 +30,30 @@ with(mydata, table(y, z))
 # note that we can create our own functions
 # useful if R doesn't have what you need already:
 # for example, power calculation from class yesterday:
+library(ggplot2)
 
 my_power_function <- function(n){
-  pnorm(120 - 1.64 * sqrt(90/n) - 118) / sqrt(90/n)
+  pnorm(((120 - 1.64 * sqrt(90/n)) - 118) / sqrt(90/n))
 }
 
+the_data <- data.frame(n = c(0, 1000))
+
+the_plot <- ggplot(the_data, aes(n)) +
+  stat_function(fun = my_power_function) +
+  theme_minimal()
+
+the_plot
+
+# But what if we wanted to make this more general
+# for example, different treatment effects?
+
+my_power_function2 <- function(n, effect = 118){
+  pnorm(((120 - 1.64 * sqrt(90/n)) - effect) / sqrt(90/n))
+}
+
+the_plot + stat_function(fun = my_power_function2,
+                         linetype = "dashed",
+                         arg=list(effect = 119.5))
 
 # Reading data into R:
 # Often we use data that isn't stored as an R object
@@ -43,7 +62,7 @@ my_power_function <- function(n){
 
 # Stata, spss
 # foreign - read.dta() or read.spss() ## note only older Stata files
-# haven - read_dta() ## works for all stata files
+# haven - read_dta() or read_sav() ## works for all stata files
 
 
 # other formats:
