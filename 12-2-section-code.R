@@ -1,3 +1,5 @@
+set.seed(1222015)
+
 library(effects)
 library(ggplot2)
 
