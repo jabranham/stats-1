@@ -1,0 +1,47 @@
+#+AUTHOR: J. Alexander Branham
+#+TITLE: Stats II review
+#+EMAIL: branham@utexas.edu
+#+OPTIONS: toc:nil
+* MLE estimation
+  Maximum likelihood estimation (MLE) is a way of getting an
+  estimator. In particular, MLE asks "What's the value for this
+  parameter that makes my data the most likely to have occurred?" In
+  order to get this, all we need to do is to write out the likelihood
+  function then find its maximum. Oftentimes, we'll take the log of
+  the likelihood function before finding the maximum because taking
+  the derivative of the log of the likelihood function is oftentimes
+  easier. It will give you the same value, though. 
+** Step 1: Find the likelihood function
+** Step 2: Take the log of the likelihood function
+** Step 3: Find the maximum of the log-likelihood 
+* MOM estimation
+  Method of Moments estimation (MOM) is another way of getting
+  estimators, just like MLE. It asks a slightly different question to
+  get these estimators, though. Whereas MLE find the value of the
+  parameter(s) that make your data the most likely to have occurred,
+  MOM simply states that your sample "moments" are good estimators of
+  the theoretical moments. 
+
+  The general way to find the MOM estimators are to find the first $K$
+  theoretical and sample moments, where $K$ represents the number of
+  equations you have. You then set them equal to one another and solve
+  for your estimators. 
+** Find the theoretical moments
+   The theoretical moments are simple. They're just $E(X^k)$ where $k$
+   represents the theoretical moment. So if you want the first
+   theoretical moment, that's just $E(X^1)$, or just $E(X)$. The second
+   theoretical moment is just $E(X^2)$ and so on for higher-order
+   moments. 
+** Find the sample moments
+   The sample moments are just as easy to find as the theoretical
+   moments. The $k$th sample moment is just 
+   
+   \begin{equation}
+   M_k = \dfrac{1}{n} \sum_{i=1}^n X_i^k
+   \end{equation}
+
+   Note that the first sample moment is $\dfrac{1}{n} \sum_{i=1}^{n} X_i$, which
+   is simply $\bar{x}$
+** Set these equal and solve 
+* Power 
+  
