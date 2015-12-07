@@ -1,5 +1,5 @@
 #+AUTHOR: J. Alexander Branham
-#+TITLE: Stats II review
+#+TITLE: Stats I review
 #+EMAIL: branham@utexas.edu
 #+DATE: Fall 2015
 #+OPTIONS: toc:nil
