@@ -29,7 +29,9 @@ Fall 2015.
     Mathematically, the product from the previous equation becomes
     difficult to work with for a variety of reasons. Therefore, we
     oftentimes take the log of the likelihood function which turns the
-    product into summation:
+    product into summation. Note that for very simple examples, this
+    isn't necessary. For more complicated examples, this makes your
+    life easier. It is also how computers calculate MLE. 
    
     \begin{equation}
     \log (L(x|\theta)) = \mathcal{L}(x|\theta) = \sum_{i=1}^n f(x_i | \theta)
@@ -52,64 +54,44 @@ Fall 2015.
    found a maximum (instead of a minimum), we also need to check the
    second derivative to make sure it's negative. 
 ** Example
-   Suppose that $X$ is a discrete random variable with the following
-   probability mass function where $0 \leq \theta \leq 1$:
-   | X | Pr(X)                   |
-   |---+-------------------------|
-   | 0 | $$ \dfrac{2 \theta}{3} $$    |
-   | 1 | $$ \dfrac{\theta}{3} $$      |
-   | 2 | $$ \dfrac{2(1-\theta)}{3} $$ |
-   | 3 | $$ \dfrac{1-\theta}{3} $$    |
+   Suppose that $X$ is a Bernoulli random variable and we observe 183
+   0's and 78 1's. What is the MLE for $p$? 
 
-   We observe the following data: $(3, 0, 2, 1, 3, 2, 1, 0, 2, 1)$.
-   What is the MLE of $\theta$? 
 *** Find likelihood function
-    The likelihood function is then: 
+    If we let $k$ represent the number of successes we have, then the
+    likelihood function is then:
     
     \begin{equation}
     \begin{split}
-    L(X|\theta) = & Pr(X=3)Pr(X+0)Pr(X=2)Pr(X=1)Pr(X=3)\\
-             & Pr(X=2)Pr(X=1)Pr(X=0)Pr(X=2)Pr(X=1)
+    L(X|p) & = \prod_{i=1}^n Pr(X=x_i | p) \\
+           & = p^k (1-p)^{n-k}
     \end{split}
     \end{equation}
 
-    We can plug in from the pmf to find the probabilities: 
-    \begin{equation}
-    L(X|\theta) = \prod_{i=1}^n \frac{2\theta}{3}^2 \frac{\theta}{3}^3 \frac{2(1-\theta)}{3}^3 \frac{1-\theta}{3}^2
-    \end{equation}
-    
-    Which is going to be a beast to maximize. So we'll follow the
-    advice of [[Step 1b]] above and take the log of the function:
+    Which for our data is simply $L(X|p) = p^{78}(1-p)^{261-78}$
 
-    \begin{equation}
-    \begin{split}
-    \mathcal{L}(X|\theta) & =  2 \left( \log \frac{2}{3} + \log \theta \right) + 3 \left( \log \frac{1}{3} + \log \theta \right)\\
-                     & + 3 \left(\log \frac{2}{3} + \log (1-\theta) \right) + 2 \left(\log \frac{1}{3} + \log (1 - \theta) \right) \\
-                     & = C + 5 \log \theta + 5 \log (1 - \theta) 
-    \end{split}
-    \end{equation}
     
-    Where $C$ is some constant that doesn't depend on $\theta$. Taking the
-    derivative of that will be much easier than the likelihood
-    function above.
+    At this point, if the likelihood function looks like it's going to
+    be a beast to maximize, you can take the log of it to make the
+    math easier. This one won't give us a problem, though. 
 
-    We can look at the log likelihood function to see where we think
-    our estimate might be. We can see from Figure [[fig:log-likelihood]]
+    We can look at the likelihood function to see where we think
+    our estimate might be. We can see from Figure [[fig:likelihood]]
     that the maximum likelihood of our data occurs somewhere around $\theta
-    = 0.5$. 
+    = 0.26$. 
 
     #+BEGIN_SRC R :results output graphics :file figures/MLE_likelihood.png :width 400 :height 300 :exports both
-      our_log_like<- function(theta){
-        5 * log(theta) + 5 * log(1 - theta)
+      our_like<- function(p){
+        p ^ 78 * (1 - p) ^ (261 - 78)
       }
 
       ggplot2::qplot(c(0,1), stat = "function",
-                     fun = our_log_like,
+                     fun = our_like,
                      geom = "line")
 
     #+END_SRC
 
-    #+NAME: fig:log-likelihood
+    #+NAME: fig:likelihood
     #+CAPTION: Graph of the log likelihood for varying thetas
     #+RESULTS:
     [[file:figures/MLE_likelihood.png]]
@@ -118,25 +100,26 @@ Fall 2015.
 
 *** Obtaining the MLE estimate 
     Although from the previous graph it's pretty obvious that the MLE
-    estimate will be somewhere around 0.5, it would still be nice to
+    estimate will be somewhere around 0.26, it would still be nice to
     formally know this. We start by finding the derivative: 
 
     \begin{equation}
-    \frac{d \mathcal{L}(X|\theta)}{d \theta} = \frac{5}{\theta} - \frac{5}{1-\theta}
+    \frac{d L(X|p)}{d p} = k p^{k-1} (1-p)^{n-k} + p^k (n-k) (1-p)^{n-k-1} (-1)
     \end{equation}
 
     We can then set the derivative equal to zero and solve. 
 
     \begin{equation*}
     \begin{split}
-    0 & =  \frac{5}{\theta} - \frac{5}{1-\theta} \\
-    \frac{5}{1-\theta} & = \frac{5}{\theta} \\
-    5 \theta & = 5 (1 - \theta) \\
-    5 \theta & = 5 - 5 \theta \\
-    10 \theta & = 5 \\
-    \hat{\theta}_{MLE} & = \frac{1}{2} 
+    0 & =  k p^{k-1} (1-p)^{n-k} + p^k (n-k) (1-p)^{n-k-1} (-1) \\
+    kp^{k-1} (1-p)^{n-k} & = p^k (n-k)(1-p)^{n-k-1} \\
+    k(1-p) & = p(n-k) \\
+    k-kp & = pn - pk \\
+    p & = \frac{k}{n}
     \end{split}
     \end{equation*}
+
+    So here $\hat{p}_{MLE} = \frac{k}{n} = {78}{261} \approx 0.299$
 
 
 * MOM estimation
@@ -168,7 +151,48 @@ Fall 2015.
    Note that the first sample moment is $\dfrac{1}{n} \sum_{i=1}^{n} X_i$, which
    is simply $\bar{x}$
 ** Set these equal and solve 
-** Example
+** Example 1
+   Let $x_1, x_2, ... x_n$ be random draws from a uniform distribution
+   with an unknown lower bound but an upper bound of 100 (i.e. $x_i
+   \sim U(a, 100)$)
+   
+   Then the pdf of this is: 
+
+   \begin{equation}
+   f(x) = \begin{cases} \frac{1}{100 - a} \quad a \leq x \leq 100 \\
+          0 \qquad \text{ otherwise}
+          \end{cases}
+   \end{equation}
+
+   Find the method of moments estimator for $a$. 
+*** Theoretical moments
+    We are estimating one parameter, so we only need to find the first
+    theoretical moment. For a uniform, this is: 
+
+    \begin{equation}
+    E(X) = \int_a^b \frac{x}{100-a} dx = \frac{a + 100}{2}
+    \end{equation}
+*** Sample moments
+    Again, we just need to find the first one, which is simply: 
+
+    \begin{equation}
+    \frac{1}{n} \sum_{i=1}^n x_i = \bar{x}
+    \end{equation}
+
+*** Solve for the estimator
+    We set these equal and solve for the MOM estimator:
+
+    \begin{equation*}
+    \begin{split}
+    \bar{x} & = \frac{a + 100}{2} \\
+    2 \bar{x} & = a + 100 \\
+    2 \bar{x} - 100 & = a
+    \end{split}
+    \end{equation*}
+
+    So $a_{MOM} = 2 \bar{x} - 100$. 
+    
+** Example 2 
    Let $x_1, x_2, ... x_n$ be random draws from a uniform distribution
    (i.e. $X \sim U(a,b)$)
    and we need to calculate both of the bounds($a$ and $b$). Remember
@@ -200,21 +224,21 @@ Fall 2015.
     \end{equation}
 
     \begin{equation}
-    \frac{1}{n} \sum_{i=1}^n x_i^2
+    \frac{1}{n} \sum_{i=1}^n x_i^2 = m_2
     \end{equation}
 
 *** Set theoretical and sample moments equal and solve
     Now we just set the theoretical moments and sample moments equal
     to each other and solve to find our estimators. 
     \begin{equation}
-    \bar{x} = \frac{a + b }{2} \qquad \frac{1}{n} \sum_{i=1}^n x_i^2 = \frac{a^2 + ab + b^2}{3}
+    \bar{x} = \frac{a + b }{2} \qquad m_2 = \frac{a^2 + ab + b^2}{3}
     \end{equation}
     
     When we solve for $a$ and $b$, we get that (after some nasty
     algebra): 
 
     \begin{equation}
-    \hat{a} = \bar{x} - \sqrt{3 \left( \frac{1}{n} \sum_{i=1}^n x_i^2 - \bar{x}^2 \right)} \qquad \hat{b} = \bar{x} + \sqrt{3 \left( \frac{1}{n} \sum_{i=1}^n x_i^2  - \bar{x}^2 \right)}
+    \hat{a} = \bar{x} - \sqrt{3 \left( m_2 - \bar{x}^2 \right)} \qquad \hat{b} = \bar{x} + \sqrt{3 \left( m_2  - \bar{x}^2 \right)}
     \end{equation}
     
 
