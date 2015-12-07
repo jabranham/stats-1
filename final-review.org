@@ -1,7 +1,13 @@
 #+AUTHOR: J. Alexander Branham
 #+TITLE: Stats II review
 #+EMAIL: branham@utexas.edu
+#+DATE: Fall 2015
 #+OPTIONS: toc:nil
+#+LATEX_HEADER: \usepackage{mathtools}
+
+This document is intended as a review guide for a few topics we
+covered in the second half of the semester in Statistics I,
+Fall 2015. 
 * MLE estimation
   Maximum likelihood estimation (MLE) is a way of getting an
   estimator. In particular, MLE asks "What's the value for this
@@ -12,8 +18,127 @@
   the derivative of the log of the likelihood function is oftentimes
   easier. It will give you the same value, though. 
 ** Step 1: Find the likelihood function
-** Step 2: Take the log of the likelihood function
+   We can find the likelihood function $L(\theta)$ by simply multiplying
+   together the probability of each $X_i$, if they're independent
+   (which is what we generally assume). That's simple to do:
+  
+   \begin{equation}
+   L(\theta) = \prod_{i=1}^n f(x_i | \theta)
+   \end{equation}
+*** Step 1b
+    Mathematically, the product from the previous equation becomes
+    difficult to work with for a variety of reasons. Therefore, we
+    oftentimes take the log of the likelihood function which turns the
+    product into summation:
+   
+    \begin{equation}
+    \log (L(x|\theta)) = \mathcal{L}(x|\theta) = \sum_{i=1}^n f(x_i | \theta)
+    \end{equation}
+
+    Note that this step isn't absolutely necessary. It just makes the
+    math easier (usually) and will always give the same values as if
+    you didn't take the log. 
 ** Step 3: Find the maximum of the log-likelihood 
+   Now that we have formally specified the likelihood of our data in
+   terms of an unknown $\theta$, we can find the value for $\theta$ that
+   maximizes the likelihood of our data. We could do this by hand,
+   plugging in all of the possible values for $\theta$. But that would take
+   a while and be a lot of work, so we can use /optimization/
+   instead. This is the process of finding the maximum (or minimum) of
+   a function. 
+
+   Mechanically, this is pretty simple. We simply take the derivative
+   of the (log) likelihood and set it equal to zero. To ensure we've
+   found a maximum (instead of a minimum), we also need to check the
+   second derivative to make sure it's negative. 
+** Example
+   Suppose that $X$ is a discrete random variable with the following
+   probability mass function where $0 \leq \theta \leq 1$:
+   | X | Pr(X)                   |
+   |---+-------------------------|
+   | 0 | $$ \dfrac{2 \theta}{3} $$    |
+   | 1 | $$ \dfrac{\theta}{3} $$      |
+   | 2 | $$ \dfrac{2(1-\theta)}{3} $$ |
+   | 3 | $$ \dfrac{1-\theta}{3} $$    |
+
+   We observe the following data: $(3, 0, 2, 1, 3, 2, 1, 0, 2, 1)$.
+   What is the MLE of $\theta$? 
+*** Find likelihood function
+    The likelihood function is then: 
+    
+    \begin{equation}
+    \begin{split}
+    L(X|\theta) = & Pr(X=3)Pr(X+0)Pr(X=2)Pr(X=1)Pr(X=3)\\
+             & Pr(X=2)Pr(X=1)Pr(X=0)Pr(X=2)Pr(X=1)
+    \end{split}
+    \end{equation}
+
+    We can plug in from the pmf to find the probabilities: 
+    \begin{equation}
+    L(X|\theta) = \prod_{i=1}^n \frac{2\theta}{3}^2 \frac{\theta}{3}^3 \frac{2(1-\theta)}{3}^3 \frac{1-\theta}{3}^2
+    \end{equation}
+    
+    Which is going to be a beast to maximize. So we'll follow the
+    advice of [[Step 1b]] above and take the log of the function:
+
+    \begin{equation}
+    \begin{split}
+    \mathcal{L}(X|\theta) & =  2 \left( \log \frac{2}{3} + \log \theta \right) + 3 \left( \log \frac{1}{3} + \log \theta \right)\\
+                     & + 3 \left(\log \frac{2}{3} + \log (1-\theta) \right) + 2 \left(\log \frac{1}{3} + \log (1 - \theta) \right) \\
+                     & = C + 5 \log \theta + 5 \log (1 - \theta) 
+    \end{split}
+    \end{equation}
+    
+    Where $C$ is some constant that doesn't depend on $\theta$. Taking the
+    derivative of that will be much easier than the likelihood
+    function above.
+
+    We can look at the log likelihood function to see where we think
+    our estimate might be. We can see from Figure [[fig:log-likelihood]]
+    that the maximum likelihood of our data occurs somewhere around $\theta
+    = 0.5$. 
+
+    #+BEGIN_SRC R :results output graphics :file figures/MLE_likelihood.png :width 400 :height 300 :exports both
+      our_log_like<- function(theta){
+        5 * log(theta) + 5 * log(1 - theta)
+      }
+
+      ggplot2::qplot(c(0,1), stat = "function",
+                     fun = our_log_like,
+                     geom = "line")
+
+    #+END_SRC
+
+    #+NAME: fig:log-likelihood
+    #+CAPTION: Graph of the log likelihood for varying thetas
+    #+RESULTS:
+    [[file:figures/MLE_likelihood.png]]
+
+    
+
+*** Obtaining the MLE estimate 
+    Although from the previous graph it's pretty obvious that the MLE
+    estimate will be somewhere around 0.5, it would still be nice to
+    formally know this. We start by finding the derivative: 
+
+    \begin{equation}
+    \frac{d \mathcal{L}(X|\theta)}{d \theta} = \frac{5}{\theta} - \frac{5}{1-\theta}
+    \end{equation}
+
+    We can then set the derivative equal to zero and solve. 
+
+    \begin{equation*}
+    \begin{split}
+    0 & =  \frac{5}{\theta} - \frac{5}{1-\theta} \\
+    \frac{5}{1-\theta} & = \frac{5}{\theta} \\
+    5 \theta & = 5 (1 - \theta) \\
+    5 \theta & = 5 - 5 \theta \\
+    10 \theta & = 5 \\
+    \hat{\theta}_{MLE} & = \frac{1}{2} 
+    \end{split}
+    \end{equation*}
+
+
 * MOM estimation
   Method of Moments estimation (MOM) is another way of getting
   estimators, just like MLE. It asks a slightly different question to
@@ -34,7 +159,7 @@
    moments. 
 ** Find the sample moments
    The sample moments are just as easy to find as the theoretical
-   moments. The $k$th sample moment is just 
+   moments. The $k^{th}$ sample moment is just 
    
    \begin{equation}
    M_k = \dfrac{1}{n} \sum_{i=1}^n X_i^k
@@ -43,5 +168,54 @@
    Note that the first sample moment is $\dfrac{1}{n} \sum_{i=1}^{n} X_i$, which
    is simply $\bar{x}$
 ** Set these equal and solve 
+** Example
+   Let $x_1, x_2, ... x_n$ be random draws from a uniform distribution
+   (i.e. $X \sim U(a,b)$)
+   and we need to calculate both of the bounds($a$ and $b$). Remember
+   that the pdf of a uniform distribution is
+
+   \begin{equation}
+   f(x) = \begin{cases} \frac{1}{b - a} \quad a \leq x \leq b \\
+          0 \qquad \text{ otherwise}
+          \end{cases}
+   \end{equation}
+
+*** Theoretical moments
+    Since we have two unknown parameters, we need to calculate the
+    first two theoretical moments:
+
+    \begin{equation}
+    E(X) = \int_a^b \frac{x}{b-a} dx = \frac{a + b}{2}
+    \end{equation}
+
+    \begin{equation}
+    E(X^2) = \int_a^b \frac{x^2}{b-a} dx = \frac{a^2 + ab + b^2}{3}
+    \end{equation}
+
+*** Sample moments
+    We need to find the first two sample moments:
+
+    \begin{equation}
+    \frac{1}{n} \sum_{i=1}^n x_i = \bar{x}
+    \end{equation}
+
+    \begin{equation}
+    \frac{1}{n} \sum_{i=1}^n x_i^2
+    \end{equation}
+
+*** Set theoretical and sample moments equal and solve
+    Now we just set the theoretical moments and sample moments equal
+    to each other and solve to find our estimators. 
+    \begin{equation}
+    \bar{x} = \frac{a + b }{2} \qquad \frac{1}{n} \sum_{i=1}^n x_i^2 = \frac{a^2 + ab + b^2}{3}
+    \end{equation}
+    
+    When we solve for $a$ and $b$, we get that (after some nasty
+    algebra): 
+
+    \begin{equation}
+    \hat{a} = \bar{x} - \sqrt{3 \left( \frac{1}{n} \sum_{i=1}^n x_i^2 - \bar{x}^2 \right)} \qquad \hat{b} = \bar{x} + \sqrt{3 \left( \frac{1}{n} \sum_{i=1}^n x_i^2  - \bar{x}^2 \right)}
+    \end{equation}
+    
 * Power 
   
