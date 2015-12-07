@@ -217,5 +217,124 @@ Fall 2015.
     \hat{a} = \bar{x} - \sqrt{3 \left( \frac{1}{n} \sum_{i=1}^n x_i^2 - \bar{x}^2 \right)} \qquad \hat{b} = \bar{x} + \sqrt{3 \left( \frac{1}{n} \sum_{i=1}^n x_i^2  - \bar{x}^2 \right)}
     \end{equation}
     
-* Power 
+
+* Significance & Power 
+  There are two kinds of errors we can make in hypothesis testing. A
+  Type I error is committed when we reject $H_0$ when $H_0$ is actually
+  true. We make a Type II error when we fail to reject a false
+  null. Table [[tab-errors]] nicely summarizes this relationship. 
+
+  #+NAME: tab-errors
+  | $H_0$  | Decision |                |
+  |       | Reject   | Fail to Reject |
+  | True  | Type I   | $\checkmark$            |
+  | False | $\checkmark$      | Type II        |
   
+  There's an obvious tradeoff here between the frequency with which we
+  commit either kind of error. In the limit, if we never reject a
+  null, then we'll never commit a Type I error, but we'll never reject
+  a false null either. We can formally define the probability of
+  committing either kinds of error.
+
+** Significance
+
+  \begin{equation}
+  \alpha = Pr( \text{Type I error} | H_0)
+  \end{equation}
+  
+  Thus, $\alpha$ represents the probability of making a Type I error if the
+  null is actually true. We use $\alpha$ such that there is $(1- \alpha)$
+  probability of being inside the critical region is our null is
+  true. If we see a test statistic outside that critical region, then
+  we know there is a less than $\alpha$ percent chance that that would
+  happen purely due to randomness if the null were actually true. This
+  is the *significance* of a test. 
+
+** Power
+
+  \begin{equation}
+  \beta = Pr(\text{Type II error})
+  \end{equation}
+  
+  $\beta$, on the other hand, represents the probability of committing a
+  Type II error. This is impossible to mathematically calculate most
+  of the time, though. It's not enough just to say that the null isn't
+  true - we need to specify what the true parameter is equal to in
+  order to calculate $\beta$. We refer to $(1-\beta)$ as the *power* of a
+  test. Usually, we'll look at how power varies as a function of
+  unknown parameters or $n$. 
+
+*** Example
+    You've designed an experiment to test the effect of disgust on
+    attitudes towards the incumbent. From the results of a pilot
+    study, you believe that attitudes toward the incumbent are
+    normally distributed with a mean of 50 and standard deviation
+    of 6. You believe that your treatment will decrease the mean by 4
+    points. How many participants do you need in order to detect this
+    with 90 percent probability? Use a two-tailed test and $\alpha =
+    0.05$. 
+
+    Note here that $H_0: \mu =  50$ and $H_A: \mu \neq 50$. For this example,
+    we'll assume that we know the standard deviation is $6$. Relaxing
+    that assumption is pretty straightforward, though. So note that
+    under the null, our estimator $\bar{x} \sim N(50, \frac{6^2}{n})$ and
+    that if our guess about the effect size is true, then $\bar{x} \sim
+    N(54, \frac{6^2}{n})$. 
+
+    We can calculate the critical values as a function of $n$: 
+
+    \begin{equation}
+    50 \pm 1.96 \left( \sqrt{\frac{6^2}{n}} \right)
+    \end{equation}
+
+    So we'll reject if we see a value lower than that when we subtract
+    or great than that when we add. Now we just need to figure out the
+    probability of that happening if the true effect is to lower the
+    mean by 6 points. That's pretty easy to do - we know that if we
+    subtract off the mean and divide by the standard deviation, then
+    we've standardized our variable and can look up probabilities
+    using the standard normal table. So to find the probability of
+    being /less/ than the critical value, we:
+
+    #+NAME: eq-less
+    \begin{equation}
+    \Phi\left( \frac{ \left( 50 - 1.96 \left( \sqrt{\frac{6^2}{n}} \right) \right) - 54}{\sqrt{\frac{6^2}{n}}}\right)
+    \end{equation}
+
+    And then we add that to the probability of being /greater/ than
+    our other critical value:
+
+    #+NAME: eq-greater
+    \begin{equation}
+    1 - \Phi\left( \frac{ \left( 50 + 1.96 \left( \sqrt{\frac{6^2}{n}} \right) \right) - 54}{\sqrt{\frac{6^2}{n}}}\right) 
+    \end{equation}
+
+    So Equation [[eq-less]] plus Equation [[eq-greater]] gives us the
+    probability of rejecting the null hypothesis if the true mean is
+    actually 54 instead of 50. 
+
+    Now we can actually answer the question that we're interested
+    in. We want to know the number of participants needed in order to
+    detect this effect with a probability of 0.90. 
+
+    #+BEGIN_SRC R :results output graphics :file figures/power-test.png :width 400 :height 300 :exports both
+      our_power_test <- function(n){
+        left <- pnorm(((50 - 1.96 * sqrt(6 ^ 2 / n)) - 54) / sqrt(6 ^ 2 / n))
+        right <- 1 - pnorm(((50 + 1.96 * sqrt(6 ^ 2 / n)) - 54) / sqrt(6 ^ 2 / n))
+        left + right
+      }
+
+      library(ggplot2)
+
+      ggplot(data.frame(n=c(0, 100)), aes(n)) +
+        stat_function(fun = our_power_test) +
+        geom_hline(yintercept = .9, linetype = "dashed")
+    #+END_SRC
+
+    #+NAME: fig-power
+    #+CAPTION: Power tests
+    #+RESULTS:
+    [[file:figures/power-test.png]]
+    
+    So from Figure [[fig-power]], we can see that we'd need about 25
+    people in order to detect this with 90 percent probability. 
